@@ -2,7 +2,6 @@ import json
 
 
 def lambda_handler(event, context):
-
     user_input = event.get('body')
 
     if user_input is None:
@@ -10,11 +9,21 @@ def lambda_handler(event, context):
             'statusCode': 200,
             'body': json.dumps({
                 'Status': 'ERROR: Operation was not completed.',
-                'reason': 'Invalid Message --> No json body found.'
+                'reason': 'Invalid Message --> No json body found.',
+                'event': event
             })
         }
 
     user_input = json.loads(event.get('body'))
+
+    if user_input.get('data') == 'test':
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'Status': 'Test Complete.',
+                'event': event
+            })
+        }
 
     operation = user_input.get('operation')
 
@@ -23,7 +32,8 @@ def lambda_handler(event, context):
             'statusCode': 200,
             'body': json.dumps({
                 'Status': 'ERROR: Operation was not completed.',
-                'reason': 'Unable to get your ID for setting the gps data'
+                'reason': 'Unable to get your ID for setting the gps data',
+                'event': event
             })
         }
 
@@ -40,6 +50,13 @@ def lambda_handler(event, context):
     elif operation == 'get gps':
         if user_input.get('getid') is not None:
             getid = user_input.get('getid')
+            return {
+                'statusCode': 200,
+                'body': json.dumps({
+                    'Status': 'Successfully got gps data.',
+                    'gpsdata': 'EARTH'
+                })
+            }
         else:
             return {
                 'statusCode': 200,
@@ -60,47 +77,49 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'body': json.dumps({
-            'Hello': 'Hello from Lambda!',
+            'ERROR': 'This should have been unreachable...',
             'connectionId': event['requestContext']['connectionId'],
             'event': event
         })
     }
 
 if __name__ == "__main__":
-    lambda_handler(json.dumps({
-        'Hello': 'Hello from Lambda!',
-        'connectionId': 'UYUs-cLQoAMCLEg=',
-        'event': {
-            'requestContext': {
-                'routeKey': 'test',
-                'messageId': 'UYUuZcUUIAMCLEg=',
-                'eventType': 'MESSAGE',
-                'extendedRequestId': 'UYUuZHpuoAMF-Hg=',
-                'requestTime': '14/Oct/2020:02:52:37 +0000',
-                'messageDirection': 'IN',
-                'stage': 'development',
-                'connectedAt': 1602643948538,
-                'requestTimeEpoch': 1602643957689,
-                'identity': {
-                    'cognitoIdentityPoolId': 'null',
-                    'cognitoIdentityId': 'null',
-                    'principalOrgId': 'null',
-                    'cognitoAuthenticationType': 'null',
-                    'userArn': 'null',
-                    'userAgent': 'null',
-                    'accountId': 'null',
-                    'caller': 'null',
-                    'sourceIp': '68.50.95.221',
-                    'accessKey': 'null',
-                    'cognitoAuthenticationProvider': 'null',
-                    'user': 'null'
+    print(lambda_handler(
+    {
+        "Hello": "Hello from Lambda!",
+        "connectionId": "U_vNFdo2IAMCIoA=",
+        "event": {
+            "requestContext": {
+                "routeKey": "test",
+                "messageId": "U_vNtdtRIAMCIoA=",
+                "eventType": "MESSAGE",
+                "extendedRequestId": "U_vNtEwHIAMFoxg=",
+                "requestTime": "26/Oct/2020:01:52:49 +0000",
+                "messageDirection": "IN",
+                "stage": "development",
+                "connectedAt": 1603677165298,
+                "requestTimeEpoch": 1603677169209,
+                "identity": {
+                    "cognitoIdentityPoolId": "null",
+                    "cognitoIdentityId": "null",
+                    "principalOrgId": "null",
+                    "cognitoAuthenticationType": "null",
+                    "userArn": "null",
+                    "userAgent": "null",
+                    "accountId": "null",
+                    "caller": "null",
+                    "sourceIp": "68.50.95.221",
+                    "accessKey": "null",
+                    "cognitoAuthenticationProvider": "null",
+                    "user": "null"
                 },
-                'requestId': 'UYUuZHpuoAMF-Hg=',
-                'domainName': '10eoew3urf.execute-api.us-east-1.amazonaws.com',
-                'connectionId': 'UYUs-cLQoAMCLEg=',
-                'apiId': '10eoew3urf'
+                "requestId": "U_vNtEwHIAMFoxg=",
+                "domainName": "10eoew3urf.execute-api.us-east-1.amazonaws.com",
+                "connectionId": "U_vNFdo2IAMCIoA=",
+                "apiId": "10eoew3urf"
             },
-            'body': '{\'action\':\'test\', \'data\': \'hello\'}',
-            'isBase64Encoded': 'false'
+            "body": "{action: \"test\", data: \"test\"}",
+            "isBase64Encoded": "false"
         }
-    }), None)
+    }
+        , None))
