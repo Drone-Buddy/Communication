@@ -34,16 +34,19 @@ class TestWebsocket(unittest.TestCase):
 
 class TestGps(unittest.TestCase):
 
+    test_gps_data = "Indiana, USA"
+
     def InvalidTest(self):
         result = send_websocket("{\"action\": \"test\", \"data\": \"invalid\"}")
         self.assertEqual(result.get('Status'), "ERROR: Operation was not completed.")
-        self.assertEqual(result.get('reason'), "Unable to get your ID for setting the gps data")
+        self.assertEqual(result.get('reason'), "Unable to get your ID or TYPE for setting the gps data")
 
     def InvalidOperation(self):
         send_data_op = {
             "action": "test",
             "operation": "invalid",
-            "id": 0
+            "id": 0,
+            "type": "drone"
         }
         send_data = json.dumps(send_data_op)
         result = send_websocket(send_data)
@@ -54,8 +57,9 @@ class TestGps(unittest.TestCase):
         send_data_op = {
             "action": "test",
             "operation": "set gps",
-            "id": 0,
-            "gpsdata": "EARTH"
+            "id": 2,
+            "gpsdata": str(self.test_gps_data),
+            "type": "drone"
         }
         send_data = json.dumps(send_data_op)
         result = send_websocket(send_data)
@@ -65,13 +69,15 @@ class TestGps(unittest.TestCase):
         send_data_op = {
             "action": "test",
             "operation": "get gps",
-            "id": "NA",
-            "getid": "NA"
+            "id": "0",
+            "getid": "2",
+            "type": "drone",
+            "gettype": "drone"
         }
         send_data = json.dumps(send_data_op)
         result = send_websocket(send_data)
         self.assertEqual(result.get('Status'), "Successfully got gps data.")
-        self.assertEqual(result.get('gpsdata'), "EARTH")
+        self.assertEqual(result.get('gpsdata'), str(self.test_gps_data))
 
 def suite():
     suite = unittest.TestSuite()
