@@ -39,7 +39,7 @@ class TestGps(unittest.TestCase):
     def InvalidTest(self):
         result = send_websocket("{\"action\": \"test\", \"data\": \"invalid\"}")
         self.assertEqual(result.get('Status'), "ERROR: Operation was not completed.")
-        self.assertEqual(result.get('reason'), "Unable to get your ID or TYPE for setting the gps data")
+        self.assertEqual(result.get('reason'), "Unable to get your TYPE for setting the gps data")
 
     def InvalidOperation(self):
         send_data_op = {
