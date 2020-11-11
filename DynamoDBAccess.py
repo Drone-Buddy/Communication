@@ -70,6 +70,9 @@ class DynamoDBAccess:
         return count
 
     def get_drone_gps(self, drone_id):
+        return self.get_drone_entry(drone_id, 'gpsdata')
+        
+    def get_drone_entry(self, drone_id, entry):
         try:
             response = self.drones_table.get_item(
                 Key={
@@ -79,7 +82,7 @@ class DynamoDBAccess:
         except ClientError as e:
             print(e.response['Error']['Message'])
         else:
-            return response['Item']['gpsdata']
+            return response['Item'][entry]
 
     def update_drone_gps(self, drone_id, newgpsdata):
         response = self.drones_table.get_item(

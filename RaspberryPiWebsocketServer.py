@@ -1,5 +1,6 @@
 import websocket
 import json
+from datetime import datetime
 
 try:
     import thread
@@ -9,10 +10,11 @@ import time
 
 
 def on_message(ws, message):
-    print(message)
     if "gpsdata: " in message:
         gpsdata = message.replace("gpsdata: ", '')
-        print("Recieved GPS Data: " + gpsdata)
+        print("[" + str(datetime.now().strftime('%Y-%m-%d %H:%M:%S::%f')[:-3]) + "] ==> Recieved GPS Data: " + gpsdata)
+    else:
+        print(message)
 
 
 def on_error(ws, error):

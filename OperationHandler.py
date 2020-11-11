@@ -102,3 +102,26 @@ def get_gps(event, user_input, db):
 
     else:
         return operation_failed(event, 'Unable to get the getid or gettype for setting the gps data')
+
+def reserve_drone(event, user_input, db):
+    if user_input.get('getid') is not None and user_input.get('gettype') is not None:
+        getid = None
+        data = None
+        gettype = str(user_input.get('gettype'))
+        getid = user_input.get('getid')
+        if gettype == 'drone':
+            data = db.get_drone_gps(getid)
+        elif gettype == 'user':
+            data = db.get_user_gps(getid)
+        else:
+            return operation_failed(event, 'Invalid gettype')
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'Status': 'Successfully got gps data.',
+                'gpsdata': str(data)
+            })
+        }
+
+    else:
+        return operation_failed(event, 'Unable to get the getid or gettype for setting the gps data')
