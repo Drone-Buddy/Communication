@@ -115,7 +115,18 @@ class DynamoDBAccess:
         item = response['Item']
         websocket = item.get('websocket')
         if websocket is not None:
-            self.api_client.post_to_connection(Data=message, ConnectionId=websocket)
+            try:
+                self.api_client.post_to_connection(Data=message, ConnectionId=websocket)
+            except ApiGatewayManagementApi.Client.exceptions.GoneException:
+                item['websocket'] = 'None'
+                self.users_table.put_item(Item=item)
+                return False
+            except:
+                item['websocket'] = 'None'
+                self.users_table.put_item(Item=item)
+                return False
+            return True
+
 
     def get_tables(self):
         return self.dynamo_db_client.list_tables().get('TableNames')
