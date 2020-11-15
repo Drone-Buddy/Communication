@@ -19,7 +19,7 @@ def on_message(ws, message):
         if nmea is not None:
             if serial_comm is None or serial_comm.is_open is False:
                 serial_comm = serial.Serial('/dev/serial0')
-            serial_comm.write(nmea)
+            serial_comm.write(nmea.encode())
         print("[" + str(datetime.now().strftime('%Y-%m-%d %H:%M:%S::%f')[:-3]) + "] ==> Recieved GPS NMEA Data: " +
               nmea)
 
