@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import websocket
 import json
 import serial
@@ -10,8 +11,7 @@ except ImportError:
 import time
 
 
-def on_message(ws, message):
-    global serial_comm
+def on_message(ws, message, serial_comm):
     if "gpsdata: " in message:
         gpsdata = message.replace("gpsdata: ", '').replace("\'", "\"")
         gpsdatajson = json.loads(gpsdata)
@@ -50,14 +50,13 @@ def on_open(ws):
 
 
 if __name__ == "__main__":
-    global serial_comm
     serial_comm = serial.Serial('/dev/serial0')
     print('Sending gps data to serial port: ' + str(serial_comm.name))
     # For Debug:
     # websocket.enableTrace(True)
     print('Starting WebSocket connection to AWS.')
     ws = websocket.WebSocketApp("wss://10eoew3urf.execute-api.us-east-1.amazonaws.com/development",
-                                on_message=on_message,
+                                on_message=lambda ws, msg: on_message(ws, msg, serial_comm),
                                 on_error=on_error,
                                 on_close=on_close)
     ws.on_open = on_open
