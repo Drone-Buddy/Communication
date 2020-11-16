@@ -18,7 +18,6 @@ class GPSStream:
                                   parity=serial.PARITY_NONE,
                                   stopbits=serial.STOPBITS_ONE)
         self.data = data
-        self.last_msg = None
         self.keep_alive()
 
 
@@ -43,9 +42,8 @@ class GPSStream:
         valid data.
         """
         self.tick()
-        threading.Timer(0.1, self.keep_alive).start()
         self.port.write(self.msg)
-        self.last_msg = self.msg
+        threading.Timer(0.5, self.keep_alive).start()
         print(f'Sent: {self.msg}')
 
 
@@ -95,7 +93,7 @@ def construct_gpgga(data):
         sentence = f'GPGGA,{utc},{lat},{lat_hemi},{long},{long_hemi},{fix},{num_sats},{hdop},{altitude},,{dsep_geoid},,{dgps_delta_t},{dgps_station}'
 
     checksum = compute_checksum(sentence)
-    return f'${sentence}*{checksum:X}\r\n'.encode(encoding='ASCII', errors='strict')
+    return f'${sentence}*{checksum:X}\r\n'.encode(encoding='utf-8', errors='strict')
 
 
 def compute_checksum(sentence):
