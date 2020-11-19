@@ -127,6 +127,16 @@ def on_error(ws, error):
 
 def on_close(ws):
     print("### AWS WebSocket is closed ###")
+    try_connect()
+
+
+def try_connect():
+    ws = websocket.WebSocketApp("wss://10eoew3urf.execute-api.us-east-1.amazonaws.com/development",
+                                on_message=lambda ws, msg: on_message(ws, msg, gps_stream),
+                                on_error=on_error,
+                                on_close=on_close)
+    ws.on_open = on_open
+    ws.run_forever()
 
 
 def on_open(ws):
@@ -153,10 +163,4 @@ if __name__ == "__main__":
     
     # For Debug:
     # websocket.enableTrace(True)
-    print('Starting WebSocket connection to AWS.')
-    ws = websocket.WebSocketApp("wss://10eoew3urf.execute-api.us-east-1.amazonaws.com/development",
-                                on_message=lambda ws, msg: on_message(ws, msg, gps_stream),
-                                on_error=on_error,
-                                on_close=on_close)
-    ws.on_open = on_open
-    ws.run_forever()
+    try_connect()
