@@ -127,6 +127,7 @@ def on_error(ws, error):
 
 def on_close(ws):
     print("### AWS WebSocket is closed ###")
+    time.sleep(2)
     try_connect()
 
 
